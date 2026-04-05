@@ -1,0 +1,237 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-gray-200;
+  }
+  
+  html {
+    @apply scroll-smooth;
+  }
+  
+  body {
+    @apply bg-stone-50 text-gray-900 antialiased;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  :root {
+    --primary-50: #f0f9ff;
+    --primary-100: #e0f2fe;
+    --primary-500: #0ea5e9;
+    --primary-600: #0284c7;
+    --primary-700: #0369a1;
+    --primary-900: #0c4a6e;
+  }
+}
+
+@layer components {
+  /* Modern Buttons */
+  .btn {
+    @apply inline-flex items-center justify-center rounded-xl font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none shadow-sm hover:shadow-md active:scale-[0.98] px-4 py-2.5 text-sm min-h-[42px];
+  }
+  
+  .btn-primary {
+    @apply btn bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 focus-visible:ring-blue-500;
+  }
+  
+  .btn-secondary {
+    @apply btn bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 hover:border-gray-300 focus-visible:ring-gray-500;
+  }
+  
+  .btn-ghost {
+    @apply btn hover:bg-gray-100 text-gray-600 hover:text-gray-900 shadow-none hover:shadow-sm;
+  }
+  
+  .btn-danger {
+    @apply btn bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500;
+  }
+  
+  .btn-success {
+    @apply btn bg-green-600 text-white hover:bg-green-700 focus-visible:ring-green-500;
+  }
+  
+  .btn-sm {
+    @apply px-3 py-1.5 text-sm min-h-[36px];
+  }
+  
+  .btn-md {
+    @apply px-4 py-2.5 text-sm min-h-[42px];
+  }
+  
+  .btn-lg {
+    @apply px-6 py-3 text-base min-h-[48px];
+  }
+  
+  /* Modern Inputs */
+  .input {
+    @apply flex w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 hover:border-gray-300;
+  }
+  
+  .input-error {
+    @apply border-red-300 focus:ring-red-500;
+  }
+  
+  /* Modern Cards */
+  .card {
+    @apply bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200;
+  }
+  
+  .card-elevated {
+    @apply bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-0;
+  }
+  
+  .card-header {
+    @apply px-6 py-5 border-b border-gray-100;
+  }
+  
+  .card-content {
+    @apply px-6 py-5;
+  }
+  
+  .card-footer {
+    @apply px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-2xl;
+  }
+  
+  /* Balance Display */
+  .balance-card {
+    @apply bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-3xl p-6 shadow-2xl;
+  }
+  
+  .balance-amount {
+    @apply text-4xl md:text-5xl font-bold tracking-tight;
+  }
+  
+  /* Transaction Items */
+  .transaction-item {
+    @apply flex items-center justify-between p-4 hover:bg-gray-50 rounded-xl transition-colors duration-150 cursor-pointer border border-transparent hover:border-gray-200;
+  }
+  
+  .transaction-avatar {
+    @apply w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold text-lg shadow-md;
+  }
+  
+  /* Dashboard Stats */
+  .stat-card {
+    @apply bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200;
+  }
+  
+  .stat-value {
+    @apply text-2xl md:text-3xl font-bold text-gray-900;
+  }
+  
+  .stat-label {
+    @apply text-sm font-medium text-gray-500 uppercase tracking-wide;
+  }
+  
+  /* Mobile Responsive */
+  @media (max-width: 640px) {
+    .balance-amount {
+      @apply text-3xl;
+    }
+    
+    .card-content {
+      @apply px-4 py-4;
+    }
+    
+    .card-header {
+      @apply px-4 py-4;
+    }
+    
+    /* Mobile font size adjustments */
+    h1 {
+      @apply text-lg;
+    }
+    
+    h2 {
+      @apply text-base;
+    }
+    
+    h3 {
+      @apply text-sm;
+    }
+    
+    .text-xl {
+      @apply text-lg;
+    }
+    
+    .text-lg {
+      @apply text-base;
+    }
+    
+    .text-base {
+      @apply text-sm;
+    }
+    
+    .text-sm {
+      @apply text-xs;
+    }
+    
+    /* Button font sizes */
+    .btn {
+      @apply text-xs;
+    }
+    
+    .btn-sm {
+      @apply text-xs px-2 py-1;
+    }
+    
+    /* Navbar adjustments */
+    .navbar-title {
+      @apply text-base;
+    }
+    
+    /* Transaction item text */
+    .transaction-item {
+      @apply p-3;
+    }
+    
+    .transaction-item .description {
+      @apply text-xs;
+    }
+    
+    .transaction-item .amount {
+      @apply text-sm;
+    }
+    
+    /* Stat card adjustments */
+    .stat-value {
+      @apply text-xl;
+    }
+    
+    .stat-label {
+      @apply text-xs;
+    }
+  }
+  
+  /* Loading States */
+  .loading-shimmer {
+    @apply animate-pulse bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%];
+    animation: shimmer 1.5s infinite;
+  }
+  
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  
+  /* Smooth scrollbar */
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400;
+  }
+}

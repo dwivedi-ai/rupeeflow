@@ -1,0 +1,7 @@
+{
+  "amount": 50.75,
+  "description": "Coffee at Starbucks downtown",
+  "type": "EXPENSE",
+  "category": "food",
+  "transaction_date": "2025-07-23"
+}
