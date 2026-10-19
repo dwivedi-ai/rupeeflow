@@ -75,18 +75,30 @@ func (h *APIHandler) HandleGoogleCallback(w http.ResponseWriter, r *http.Request
 		http.Redirect(w, r, h.cfg.FrontendURL+"/login", http.StatusTemporaryRedirect)
 		return
 	}
-	oauthState, err := r.Cookie("oauthstate")
-	if err != nil {
-		log.Printf("google callback: missing oauthstate cookie")
+	// Older builds set the cookie on /api/auth/google, so a browser may send
+	// several oauthstate cookies; accept the request if any of them matches.
+	state := r.FormValue("state")
+	var sent []string
+	matched := false
+	for _, c := range r.Cookies() {
+		if c.Name == "oauthstate" {
+			sent = append(sent, c.Value)
+			if state != "" && c.Value == state {
+				matched = true
+			}
+		}
+	}
+	// The state is single-use: clear it on both the current and the old path.
+	for _, p := range []string{"/", "/api/auth/google"} {
+		http.SetCookie(w, &http.Cookie{Name: "oauthstate", Value: "", Path: p, MaxAge: -1})
+	}
+	if len(sent) == 0 {
+		log.Printf("google callback: no oauthstate cookie on host %s (login must start on the same domain as GOOGLE_REDIRECT_URL)", r.Host)
 		http.Error(w, "missing oauth state cookie", http.StatusBadRequest)
 		return
 	}
-	// The state is single-use, so clear the cookie either way.
-	http.SetCookie(w, &http.Cookie{Name: "oauthstate", Value: "", Path: "/", MaxAge: -1})
-
-	if r.FormValue("state") != oauthState.Value {
-		log.Printf("google callback: state mismatch (query=%q cookie=%q, %d cookies sent)",
-			r.FormValue("state"), oauthState.Value, len(r.Cookies()))
+	if !matched {
+		log.Printf("google callback: state mismatch on host %s (query=%q cookies=%q)", r.Host, state, sent)
 		http.Error(w, "invalid oauth google state", http.StatusBadRequest)
 		return
 	}
