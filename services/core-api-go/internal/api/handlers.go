@@ -13,6 +13,7 @@ import (
 	"rupeeflow/internal/nlp"
 	"rupeeflow/internal/storage/postgres"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -53,19 +54,39 @@ func NewAPIHandler(store *postgres.Store, gOauth *auth.GoogleOAuthConfig, token 
 }
 func (h *APIHandler) HandleGoogleLogin(w http.ResponseWriter, r *http.Request) {
 	state := auth.GenerateStateOauthCookie()
-	cookie := http.Cookie{Name: "oauthstate", Value: state, Expires: time.Now().Add(20 * time.Minute), HttpOnly: true}
-	http.SetCookie(w, &cookie)
+	http.SetCookie(w, &http.Cookie{
+		Name:     "oauthstate",
+		Value:    state,
+		Path:     "/",
+		Expires:  time.Now().Add(20 * time.Minute),
+		HttpOnly: true,
+		Secure:   strings.HasPrefix(h.cfg.GoogleRedirectURL, "https://"),
+		SameSite: http.SameSiteLaxMode,
+	})
+	// Each login needs a fresh state; a cached redirect would reuse an old one.
+	w.Header().Set("Cache-Control", "no-store")
 	url := h.gOauth.AuthCodeURL(state)
 	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 }
 func (h *APIHandler) HandleGoogleCallback(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Cache-Control", "no-store")
+	if e := r.FormValue("error"); e != "" {
+		log.Printf("google callback: google returned error=%s", e)
+		http.Redirect(w, r, h.cfg.FrontendURL+"/login", http.StatusTemporaryRedirect)
+		return
+	}
 	oauthState, err := r.Cookie("oauthstate")
 	if err != nil {
+		log.Printf("google callback: missing oauthstate cookie")
 		http.Error(w, "missing oauth state cookie", http.StatusBadRequest)
 		return
 	}
+	// The state is single-use, so clear the cookie either way.
+	http.SetCookie(w, &http.Cookie{Name: "oauthstate", Value: "", Path: "/", MaxAge: -1})
 
 	if r.FormValue("state") != oauthState.Value {
+		log.Printf("google callback: state mismatch (query=%q cookie=%q, %d cookies sent)",
+			r.FormValue("state"), oauthState.Value, len(r.Cookies()))
 		http.Error(w, "invalid oauth google state", http.StatusBadRequest)
 		return
 	}

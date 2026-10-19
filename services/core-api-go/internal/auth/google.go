@@ -27,5 +27,5 @@ func NewGoogleOAuthConfig(cfg *config.Config) *GoogleOAuthConfig {
 func GenerateStateOauthCookie() string {
 	b := make([]byte, 16)
 	rand.Read(b)
-	return base64.URLEncoding.EncodeToString(b)
+	return base64.RawURLEncoding.EncodeToString(b)
 }
