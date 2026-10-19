@@ -1,0 +1,9 @@
+**/node_modules
+**/dist
+**/.env
+**/.env.local
+**/__pycache__
+services/core-api-go/rupeeflow-api
+.git
+*.md
+test_*
