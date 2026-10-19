@@ -51,17 +51,17 @@ export const AuthProvider = ({ children }) => {
       toast.success('Login successful!');
       return { success: true };
     } catch (error) {
-      const message = error.response?.data?.error || 'Login failed';
+      const message = error.response?.data?.error || (typeof error.response?.data === 'string' && error.response.data.trim()) || 'Login failed';
       dispatch({ type: 'SET_ERROR', payload: message });
       toast.error(message);
       return { success: false, error: message };
     }
   };
 
-  const register = async (userData) => {
+  const register = async (email, password, fullName) => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
-      const data = await authAPI.register(userData);
+      const data = await authAPI.register(email, password, fullName);
       
       localStorage.setItem('authToken', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
@@ -70,7 +70,7 @@ export const AuthProvider = ({ children }) => {
       toast.success('Registration successful!');
       return { success: true };
     } catch (error) {
-      const message = error.response?.data?.error || 'Registration failed';
+      const message = error.response?.data?.error || (typeof error.response?.data === 'string' && error.response.data.trim()) || 'Registration failed';
       dispatch({ type: 'SET_ERROR', payload: message });
       toast.error(message);
       return { success: false, error: message };
